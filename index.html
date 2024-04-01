@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Calculator</title>
+<style>
+    body {
+        font-family: "SF Pro", "Helvetica Neue", Helvetica, Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #f2f2f2;
+        transition: background-color 0.3s; /* Smooth transition for background color change */
+    }
+
+    .calculator {
+        background-color: #f9f9f9;
+        border: 2px solid #000;
+        border-radius: 15px;
+        padding: 20px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        width: 300px;
+        position: relative;
+    }
+
+    .header {
+        text-align: left;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 10px;
+        display: flex;
+    }
+
+    .header h3 {
+        font-size: 18px;
+        margin: 0;
+    }
+
+    .display {
+        font-size: 36px;
+        color: #000;
+        border: 2px solid #000;
+        border-radius: 5px;
+        background-color: transparent;
+        width: calc(100%);
+        text-align: right;
+        padding: 10px;
+        margin-bottom: 10px;
+        outline: none;
+        box-sizing: border-box;
+    }
+
+    .button {
+        width: 70px;
+        height: 50px;
+        border-radius: 5px;
+        border: 2px solid #000;
+        margin: 5px;
+        font-size: 24px;
+        cursor: pointer;
+        background-color: #e0e0e0;
+    }
+
+    .button:hover {
+        background-color: #c0c0c0;
+    }
+
+    .row {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .row:last-child {
+        justify-content: center;
+    }
+
+    .toggle-container {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+    }
+
+    .switch {
+        --input-focus: #2d8cf0;
+        --font-color: #323232;
+        --font-color-sub: #666;
+        --bg-color: #fff;
+        --bg-color-alt: #666;
+        --main-color: #323232;
+        position: relative;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 30px;
+        width: 30px;
+        height: 15px;
+    }
+
+    .toggle {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+
+    .slider {
+        box-sizing: border-box;
+        border-radius: 3px;
+        border: 1px solid var(--main-color);
+        box-shadow: 3px 3px var(--main-color);
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: var(--bg-colorcolor);
+        transition: 0.3s;
+    }
+
+    .slider:before {
+        box-sizing: border-box;
+        position: absolute;
+        content: "";
+        height: 15px;
+        width: 15px;
+        border: 1px solid var(--main-color);
+        border-radius: 3px;
+        left: -1px;
+        bottom: 1px;
+        background-color: var(--bg-color);
+        box-shadow: 0 2px 0 var(--main-color); /* Adjust shadow here */
+        transition: 0.3s;
+    }
+
+    .toggle:checked + .slider {
+        background-color: var(--input-focus);
+    }
+
+    .toggle:checked + .slider:before {
+        transform: translateX(15px);
+    }
+</style>
+</head>
+<body>
+
+<div class="calculator">
+    <div class="header">
+        <h3>Calculator</h3>
+        <div class="toggle-container">
+            <label class="switch toggle-container">
+                <input class="toggle" type="checkbox" id="toggle">
+                <span class="slider"></span>
+            </label>
+        </div>
+    </div>
+    <input class="display" type="text" id="display" disabled>
+    <div class="row">
+        <button class="button" onclick="appendNumber('7')">7</button>
+        <button class="button" onclick="appendNumber('8')">8</button>
+        <button class="button" onclick="appendNumber('9')">9</button>
+        <button class="button" onclick="appendOperator('+')">+</button>
+    </div>
+    <div class="row">
+        <button class="button" onclick="appendNumber('4')">4</button>
+        <button class="button" onclick="appendNumber('5')">5</button>
+        <button class="button" onclick="appendNumber('6')">6</button>
+        <button class="button" onclick="appendOperator('-')">-</button>
+    </div>
+    <div class="row">
+        <button class="button" onclick="appendNumber('1')">1</button>
+        <button class="button" onclick="appendNumber('2')">2</button>
+        <button class="button" onclick="appendNumber('3')">3</button>
+        <button class="button" onclick="appendOperator('*')">*</button>
+    </div>
+    <div class="row">
+        <button class="button" onclick="clearInput()">C</button>
+        <button class="button" onclick="appendNumber('0')">0</button>
+        <button class="button" onclick="deleteLast()">⌫</button>
+        <button class="button" onclick="appendOperator('/')">/</button>
+    </div>
+    <div class="row">
+        <button class="button" style="width: 100%;" onclick="calculate()" id="equal">=</button>
+    </div>
+</div>
+
+<script>
+    function appendNumber(number) {
+        document.getElementById('display').value += number;
+    }
+
+    function appendOperator(operator) {
+        document.getElementById('display').value += operator;
+    }
+
+    function clearInput() {
+        document.getElementById('display').value = '';
+    }
+
+    function deleteLast() {
+        let currentValue = document.getElementById('display').value;
+        document.getElementById('display').value = currentValue.slice(0, -1);
+    }
+
+    function calculate() {
+        if (!document.getElementById('toggle').checked) {
+            let result = eval(document.getElementById('display').value);
+            document.getElementById('display').value = result;
+            document.body.style.backgroundColor = "#f2f2f2"; // Change background color to default
+            document.querySelector('.calculator').style.boxShadow = '0 10px 20px rgba(0, 0, 0, 0.2)'; // Reset to default box shadow
+        } else {
+            document.getElementById('display').value = 'I Miss You! 🥰';
+            document.getElementById('equal').classList.add('clicked'); // Add clicked class
+            document.body.style.backgroundColor = "#000"; // Change background color
+            document.querySelector('.calculator').style.boxShadow = '0 0 10px #ff2d75, 0 0 20px #ff2d75, 0 0 40px #ff2d75'; // Update box shadow
+        }
+    }
+</script>
+
+</body>
+</html>
